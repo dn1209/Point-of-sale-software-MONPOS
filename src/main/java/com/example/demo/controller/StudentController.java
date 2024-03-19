@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.ApiResponse;
 import com.example.demo.model.Student;
 import com.example.demo.service.ResponseService;
 import com.example.demo.service.StudentService;
@@ -24,15 +25,18 @@ public class StudentController {
     }
 
     @GetMapping
-    public List<Student> getStudents(){
-        return studentService.getStudents();
+    public ResponseEntity<Object> getStudents() {
+        List<Student> students = studentService.getStudents();
+
+        ApiResponse response = new ApiResponse(0, students);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Object> registerNewStudent(@RequestBody Student student) {
         try {
             studentService.addNewStudent(student);
-
             // Trả về JSON response thông báo thành công
             String successMessage = "Student đã được tạo thành công.";
             return new ResponseEntity<>(ResponseService.createSuccessResponse("success", successMessage), HttpStatus.OK);
