@@ -1,12 +1,14 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.util.Date;
 @Entity
 @Table
+@Data
 public class User {
     @Id
     @SequenceGenerator(
@@ -28,7 +30,11 @@ public class User {
     private int storeId;
     private LocalDate created;
     private Date updated;
+    @OneToOne
+    @JoinColumn(name = "parent_id")
+    private Store store;
     private Date logined;
     private String tokenLogin;
+
 
 }

@@ -1,8 +1,9 @@
-package com.example.demo.model;
+package com.example.demo.model.payload;
 
 public class ApiResponse {
     private final int status_code;
-    private final Object data;
+    private  Object data;
+    private  Object message;
 
     public ApiResponse(int status_code, Object data) {
         this.data = data;

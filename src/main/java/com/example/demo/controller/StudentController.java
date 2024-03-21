@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.ApiResponse;
+import com.example.demo.model.payload.ApiResponse;
 import com.example.demo.model.Student;
 import com.example.demo.service.ResponseService;
 import com.example.demo.service.StudentService;
@@ -9,9 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "api/v1/student")

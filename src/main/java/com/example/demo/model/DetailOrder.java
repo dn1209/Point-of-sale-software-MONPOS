@@ -21,7 +21,7 @@ public class DetailOrder {
     private int quantity;
     private int price;
     private int discount;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "order_id")
-    private Order order;
+    private Orders order;
 }

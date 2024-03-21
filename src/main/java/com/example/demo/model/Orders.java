@@ -4,18 +4,19 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.util.List;
+
 @Entity
 @Table
-public class Order {
+public class Orders {
     @Id
     @SequenceGenerator(
-            name = "order_sequence",
-            sequenceName = "order_sequence",
+            name = "orders_sequence",
+            sequenceName = "orders_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "order_sequence"
+            generator = "orders_sequence"
     )
     private long id;
     private String outputCode;
@@ -31,6 +32,7 @@ public class Order {
     private Float totalMoney;
     private int totalQuantity;
     private Float lack;
+
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<DetailOrder> detailOrders;
     private int orderStatus;
@@ -39,9 +41,6 @@ public class Order {
     private int prdGroupId;
     private int prdStatus;
     private LocalDate createdAt;
-    public void addDetailOrder(DetailOrder detailOrder) {
-        detailOrders.add(detailOrder);
-        detailOrder.setOrder(this);
-    }
+
 
 }
