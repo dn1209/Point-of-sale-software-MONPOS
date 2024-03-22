@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.jwt.JwtTokenProvider;
 import com.example.demo.model.CustomUserDetails;
 import com.example.demo.model.payload.*;
+import com.example.demo.service.UserServices;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,9 @@ import org.springframework.web.bind.annotation.*;
 public class LodaRestController {
 
     @Autowired
+    UserServices userServices;
+
+    @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
@@ -32,13 +36,19 @@ public class LodaRestController {
                             loginRequest.getPassword()
                     )
             );
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = jwtTokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
-            return ResponseEntity.ok(new LoginResponse(jwt));
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            if(loginRequest.getParentuser() != userServices.getParentUser(userDetails.getUser().getId())){
+                ApiResponseError response = new ApiResponseError(HttpStatus.UNAUTHORIZED.value(), "gian hang không đúng.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }else {
+                String jwt = jwtTokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
+                return ResponseEntity.ok(new LoginResponse(jwt));
+            }
         }catch (BadCredentialsException ex){
             ApiResponseError response = new ApiResponseError(HttpStatus.UNAUTHORIZED.value(), "Tài khoản hoặc mật khẩu không đúng.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-
         }
     }
     @GetMapping("/random")

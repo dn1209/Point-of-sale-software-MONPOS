@@ -27,6 +27,14 @@ public class UserServices implements UserDetailsService {
         return new CustomUserDetails(user);
     }
 
+    public String getParentUser(Long userName){
+        Optional<String> userOptional = userRepository.findUserNameByUserId(userName);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found with username: " + userName);
+        }
+        return userOptional.get();
+    }
+
 
     public UserDetails loadUserById(Long userId) {
         Optional<com.example.demo.model.User> userOptional = userRepository.findUserById(userId);
