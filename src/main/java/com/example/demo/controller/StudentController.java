@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.payload.ApiResponse;
+import com.example.demo.model.payload.Response.ApiResponse;
 import com.example.demo.model.Student;
 import com.example.demo.service.ResponseService;
 import com.example.demo.service.StudentService;

@@ -1,4 +1,4 @@
-package com.example.demo.model.payload;
+package com.example.demo.model.payload.authenticate;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

@@ -21,4 +21,7 @@ public class Store {
     private String userName;
     @OneToOne(mappedBy = "store", cascade = CascadeType.ALL)
     private User user;
+
+
+
 }

@@ -17,8 +17,15 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findUserById(Long id);
 
 
-    @Query("SELECT u.store.userName FROM User u WHERE u.id = ?1")
-    Optional<String> findUserNameByUserId(Long userId);
+    @Query("SELECT u.store.userName FROM User u WHERE u.id = :userId")
+    Optional<String> findUserNameByUserId( Long userId);
+
+
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.userName = :userName")
+    boolean existsByUserName(String userName);
+
+    @Query("SELECT CASE WHEN COUNT(u.store) > 0 THEN false ELSE true END FROM User u WHERE u.store.userName = :storeUserName")
+    boolean existsByStoreUserName(String storeUserName);
 
 
 

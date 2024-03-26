@@ -44,4 +44,13 @@ public class UserServices implements UserDetailsService {
         com.example.demo.model.User user = userOptional.get();
         return new CustomUserDetails(user);
     }
+    public boolean checkUserName(String userName){
+        boolean checkUser = userRepository.existsByUserName(userName);
+        return checkUser;
+    }
+    public boolean checkStoreName(String userName){
+        boolean checkUser = userRepository.existsByStoreUserName(userName);
+        return checkUser;
+    }
+
 }

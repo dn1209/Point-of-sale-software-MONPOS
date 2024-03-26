@@ -1,4 +1,4 @@
-package com.example.demo.model.payload;
+package com.example.demo.model.payload.Response;
 
 public class ApiResponse {
     private final int status_code;
