@@ -4,12 +4,15 @@ import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.jwt.JwtTokenProvider;
 import com.example.demo.model.CustomUserDetails;
 import com.example.demo.model.Store;
+import com.example.demo.model.User;
 import com.example.demo.model.payload.*;
 import com.example.demo.model.payload.Response.ApiResponseError;
 import com.example.demo.model.payload.authenticate.LoginRequest;
 import com.example.demo.model.payload.authenticate.LoginResponse;
+import com.example.demo.model.payload.authenticate.RegisterReponse;
 import com.example.demo.model.payload.authenticate.RegisterRequest;
 import com.example.demo.repository.StoreRepository;
+import com.example.demo.service.RegistrationService;
 import com.example.demo.service.StoreService;
 import com.example.demo.service.UserServices;
 import jakarta.validation.Valid;
@@ -23,6 +26,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,10 +38,12 @@ public class LodaRestController {
 
     @Autowired
     AuthenticationManager authenticationManager;
-
+    @Autowired
+    RegistrationService registrationService;
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
-
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     StoreService storeService;
@@ -73,24 +79,25 @@ public class LodaRestController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
-//    @PostMapping("/register")
-//    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest){
-//        try{
-//            if(userServices.checkUserName(registerRequest.getUsername())){
-//                throw new UserNotFoundException("User da ton tai with username: " + registerRequest.getUsername());
-//            }
-//        }catch (UserNotFoundException ux){
-//            ApiResponseError response = new ApiResponseError(HttpStatus.UNAUTHORIZED.value(), "Tài khoản đã tồn tại");
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-//        }
-//
-//        if(userServices.checkStoreName(registerRequest.getDisplay_name())){
-//            Store store = new Store();
-//            store.setUserName(registerRequest.getDisplay_name());
-//            storeService.saveStore(store);
-//        }
-//
-//    }
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest){
+        try{
+            if(userServices.checkUserName(registerRequest.getUsername())){
+                throw new UserNotFoundException("User da ton tai with username: " + registerRequest.getUsername());
+            }
+        }catch (UserNotFoundException ux){
+            ApiResponseError response = new ApiResponseError(HttpStatus.UNAUTHORIZED.value(), "Tài khoản đã tồn tại");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        Store store = new Store();
+        if(storeService.checkStoreName(registerRequest.getDisplay_name())){
+            store.setUserName(registerRequest.getDisplay_name());
+            storeService.saveStore(store);
+        }
+        userServices.registerUser(registerRequest.getUsername(),registerRequest.getPassword(),store,registerRequest.getEmail());
+        registrationService.registerUser(registerRequest);
+        return ResponseEntity.ok(new RegisterReponse("vui lòng kiểm tra email vừa đăng ký để xác thực tài khoản","0"));
+    }
 
     @GetMapping("/random")
     public RandomStuff randomStuff(){

@@ -53,6 +53,7 @@ public class SecurityConfig {
                 // giving permission to every request for /login endpoint
                 .authorizeRequests()
                 .requestMatchers("/api/login").permitAll()
+                .requestMatchers("/api/register").permitAll()
                 // for everything else, the user has to be authenticated
                 .anyRequest().authenticated();
 

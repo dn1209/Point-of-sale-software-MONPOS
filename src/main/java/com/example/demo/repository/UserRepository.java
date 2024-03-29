@@ -24,8 +24,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.userName = :userName")
     boolean existsByUserName(String userName);
 
-    @Query("SELECT CASE WHEN COUNT(u.store) > 0 THEN false ELSE true END FROM User u WHERE u.store.userName = :storeUserName")
-    boolean existsByStoreUserName(String storeUserName);
+
 
 
 

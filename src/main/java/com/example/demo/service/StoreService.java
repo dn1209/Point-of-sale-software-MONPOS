@@ -15,4 +15,8 @@ public class StoreService  {
     public Store saveStore(Store store) {
         return storeRepository.save(store);
     }
+    public boolean checkStoreName(String userName){
+        boolean checkUser = storeRepository.existsByStoreUserName(userName);
+        return checkUser;
+    }
 }
