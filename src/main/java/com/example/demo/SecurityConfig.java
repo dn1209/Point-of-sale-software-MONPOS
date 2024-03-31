@@ -44,23 +44,27 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                // setting stateless session, because we choose to implement Rest API
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                // giving permission to every request for /login endpoint
+                // Cho phép truy cập các điểm cuối cụ thể mà không cần xác thực
                 .authorizeRequests()
-                .requestMatchers("/api/login").permitAll()
                 .requestMatchers("/api/register").permitAll()
-                // for everything else, the user has to be authenticated
+                .requestMatchers("/api/verify").permitAll()
+                .requestMatchers("/api/login").permitAll()
+                // Yêu cầu xác thực cho bất kỳ yêu cầu nào khác
                 .anyRequest().authenticated();
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
+
+
+
 
 
 

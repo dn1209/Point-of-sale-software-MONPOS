@@ -24,6 +24,12 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.userName = :userName")
     boolean existsByUserName(String userName);
 
+    @Query("UPDATE User u set u.userStatus = '1' WHERE u.email =: email")
+    void updateUserByEmail(String email);
+
+    @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.id = :id AND u.userStatus = '0'")
+    boolean existsByIdAndUserStatusIsZero(Long id);
+
 
 
 

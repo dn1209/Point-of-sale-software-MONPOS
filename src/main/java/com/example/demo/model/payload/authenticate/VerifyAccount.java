@@ -4,11 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class LoginRequest {
+public class VerifyAccount {
     @NotBlank
-    private String username;
+    private String email;
     @NotBlank
-    private String password;
-    @NotBlank
-    private String parentuser;
+    private String verificationCode;
 }

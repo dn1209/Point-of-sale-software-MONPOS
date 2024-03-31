@@ -7,10 +7,7 @@ import com.example.demo.model.Store;
 import com.example.demo.model.User;
 import com.example.demo.model.payload.*;
 import com.example.demo.model.payload.Response.ApiResponseError;
-import com.example.demo.model.payload.authenticate.LoginRequest;
-import com.example.demo.model.payload.authenticate.LoginResponse;
-import com.example.demo.model.payload.authenticate.RegisterReponse;
-import com.example.demo.model.payload.authenticate.RegisterRequest;
+import com.example.demo.model.payload.authenticate.*;
 import com.example.demo.repository.StoreRepository;
 import com.example.demo.service.RegistrationService;
 import com.example.demo.service.StoreService;
@@ -69,6 +66,14 @@ public class LodaRestController {
                 ApiResponseError response = new ApiResponseError(HttpStatus.UNAUTHORIZED.value(), "gian hang không đúng.");
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
+            try{
+                if(userServices.checkingUserStatus(userDetails.getUser().getId())){
+                    throw new UserNotFoundException("Tài khoản chưa được xác minh ");
+                }
+            }catch (UserNotFoundException uxx){
+                ApiResponseError response = new ApiResponseError(HttpStatus.UNAUTHORIZED.value(), uxx.getMessage());
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
             String jwt = jwtTokenProvider.generateToken((CustomUserDetails) authentication.getPrincipal());
             UserData userData = new UserData((CustomUserDetails) authentication.getPrincipal(),
                     userServices.getParentUser(userDetails.getUser().getId()),
@@ -91,12 +96,27 @@ public class LodaRestController {
         }
         Store store = new Store();
         if(storeService.checkStoreName(registerRequest.getDisplay_name())){
+            System.out.println(storeService.checkStoreName(registerRequest.getDisplay_name()));
+            System.out.println("loi");
             store.setUserName(registerRequest.getDisplay_name());
             storeService.saveStore(store);
         }
-        userServices.registerUser(registerRequest.getUsername(),registerRequest.getPassword(),store,registerRequest.getEmail());
+        userServices.registerUser(registerRequest.getUsername(),registerRequest.getPassword(),storeService.findStoreByUserName(registerRequest.getDisplay_name()),registerRequest.getEmail());
         registrationService.registerUser(registerRequest);
         return ResponseEntity.ok(new RegisterReponse("vui lòng kiểm tra email vừa đăng ký để xác thực tài khoản","0"));
+    }
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyAccount(@Valid @RequestBody VerifyAccount verifyAccount){
+        try{
+            if(registrationService.checkingVerifycode(verifyAccount.getVerificationCode(), verifyAccount.getEmail())){
+                throw new UserNotFoundException("mã xác thực không hợp lệ");
+            }
+        }catch (UserNotFoundException userNotFoundException){
+            ApiResponseError response = new ApiResponseError(HttpStatus.UNAUTHORIZED.value(), userNotFoundException.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        userServices.UpdateUserStatus(verifyAccount.getEmail());
+        return ResponseEntity.ok(new RegisterReponse("Xác thực thành công","0"));
     }
 
     @GetMapping("/random")

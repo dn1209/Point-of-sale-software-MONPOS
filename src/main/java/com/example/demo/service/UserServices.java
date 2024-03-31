@@ -32,6 +32,9 @@ public class UserServices implements UserDetailsService {
         com.example.demo.model.User user = userOptional.get();
         return new CustomUserDetails(user);
     }
+    public boolean checkingUserStatus(Long id){
+        return userRepository.existsByIdAndUserStatusIsZero(id);
+    }
 
     public String getParentUser(Long userName){
         Optional<String> userOptional = userRepository.findUserNameByUserId(userName);
@@ -39,6 +42,9 @@ public class UserServices implements UserDetailsService {
             throw new UserNotFoundException("User not found with username: " + userName);
         }
         return userOptional.get();
+    }
+    public void UpdateUserStatus(String email){
+        userRepository.updateUserByEmail(email);
     }
 
 
@@ -51,8 +57,7 @@ public class UserServices implements UserDetailsService {
         return new CustomUserDetails(user);
     }
     public boolean checkUserName(String userName){
-        boolean checkUser = userRepository.existsByUserName(userName);
-        return checkUser;
+        return userRepository.existsByUserName(userName);
     }
 
     public User registerUser(String userName, String password, Store store,String email){

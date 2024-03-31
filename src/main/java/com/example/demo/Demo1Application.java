@@ -38,25 +38,25 @@ public class Demo1Application implements CommandLineRunner {
 
         // Khi chương trình chạy
         // Insert vào csdl một user.
-        User user = new User();
+//        User user = new User();
         Store store = new Store();
         store.setUserName("namm");
-        user.setUserName("nam");
-        user.setEmail("ducnam967@yahoo.com.vn");
-        user.setUserStatus("1");
-        user.setPassword(passwordEncoder.encode("nam"));
-        user.setStore(store);
-        user.setDisplayName("demotest9");
-        user.setCreated(LocalDate.now());
-        user.setLogined(Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        user.setUpdated(Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+//        user.setUserName("nam");
+//        user.setEmail("ducnam967@yahoo.com.vn");
+//        user.setUserStatus("1");
+//        user.setPassword(passwordEncoder.encode("nam"));
+//        user.setStore(store);
+//        user.setDisplayName("demotest9");
+//        user.setCreated(LocalDate.now());
+//        user.setLogined(Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+//        user.setUpdated(Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         storeRepository.save(store);
-        userRepository.save(user);
-        System.out.println(user);
+//        userRepository.save(user);
+//        System.out.println(user);
         System.out.println(store);
-        RegisterRequest registerRequest = new RegisterRequest();
-        registerRequest.setEmail("hoangdangducnam@gmail.com");
-        registrationService.registerUser(registerRequest);
+//        RegisterRequest registerRequest = new RegisterRequest();
+//        registerRequest.setEmail("hoangdangducnam@gmail.com");
+//        registrationService.registerUser(registerRequest);
 
     }
 
