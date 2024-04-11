@@ -1,10 +1,12 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 @Entity
 @Table
+@Data
 public class Product {
     @Id
     @SequenceGenerator(

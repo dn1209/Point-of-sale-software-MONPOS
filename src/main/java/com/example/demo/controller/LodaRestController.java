@@ -12,6 +12,7 @@ import com.example.demo.repository.StoreRepository;
 import com.example.demo.service.RegistrationService;
 import com.example.demo.service.StoreService;
 import com.example.demo.service.UserServices;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -86,20 +87,17 @@ public class LodaRestController {
     }
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest){
-        try{
-            if(userServices.checkUserName(registerRequest.getUsername())){
-                throw new UserNotFoundException("User da ton tai with username: " + registerRequest.getUsername());
-            }
-        }catch (UserNotFoundException ux){
+        boolean userNameExists = userServices.checkUserName(registerRequest.getUsername());
+        boolean storeNameExists = storeService.checkStoreName(registerRequest.getDisplay_name());
+
+        if (userNameExists) {
             ApiResponseError response = new ApiResponseError(HttpStatus.UNAUTHORIZED.value(), "Tài khoản đã tồn tại");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        Store store = new Store();
-        if(storeService.checkStoreName(registerRequest.getDisplay_name())){
-            System.out.println(storeService.checkStoreName(registerRequest.getDisplay_name()));
+        if(storeNameExists){
+            System.out.println(registerRequest.getDisplay_name());
             System.out.println("loi");
-            store.setUserName(registerRequest.getDisplay_name());
-            storeService.saveStore(store);
+            storeService.saveStore(registerRequest.getDisplay_name());
         }
         userServices.registerUser(registerRequest.getUsername(),registerRequest.getPassword(),storeService.findStoreByUserName(registerRequest.getDisplay_name()),registerRequest.getEmail());
         registrationService.registerUser(registerRequest);
@@ -120,7 +118,18 @@ public class LodaRestController {
     }
 
     @GetMapping("/random")
-    public RandomStuff randomStuff(){
-        return new RandomStuff("JWT Hợp lệ mới có thể thấy được message này");
+    public ResponseEntity<?> randomStuff(HttpServletRequest request){
+        String bearerToken = request.getHeader("Authorization");
+
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            String token = bearerToken.substring(7); // Bỏ phần "Bearer " từ token
+            Long userId = jwtTokenProvider.getUserIdFromJWT(token);
+            if (userId != null) {
+                // Xử lý userId ở đây, ví dụ: trả về userId trong ResponseEntity
+                return ResponseEntity.ok("User ID: " + userId);
+            }
+        }
+        return ResponseEntity.ok("loi");
+
     }
 }

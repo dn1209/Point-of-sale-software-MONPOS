@@ -3,6 +3,8 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Table
 @Data
@@ -19,9 +21,16 @@ public class Store {
     )
     private long id;
     private String userName;
-    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL)
-    private User user;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<User> users;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<GroupProduct> groupProducts;
+     public Store(){
+    }
 
 
+    public Store(String name) {
+        this.userName = name;
 
+    }
 }

@@ -30,11 +30,24 @@ public class User {
     private int storeId;
     private LocalDate created;
     private Date updated;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "parent_id")
     private Store store;
     private Date logined;
     private String tokenLogin;
 
+    public User(String userName, String password, String email, String userStatus, LocalDate created, Date updated, Store store, Date logined) {
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.userStatus = userStatus;
+        this.created = created;
+        this.updated = updated;
+        this.store = store;
+        this.logined = logined;
+    }
 
+    public User() {
+
+    }
 }

@@ -11,8 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store,Long> {
-    @Query("SELECT CASE WHEN COUNT(u.store) > 0 THEN true ELSE false END FROM User u WHERE u.store.userName = :storeUserName")
+    @Query("SELECT CASE WHEN EXISTS (SELECT 1 FROM Store s WHERE s.userName = :storeUserName) THEN false ELSE true END")
     boolean existsByStoreUserName(String storeUserName);
+
 
     @Query("SELECT u FROM Store u WHERE u.userName = ?1")
     Optional<Store> findStoreByUserName(String userName);

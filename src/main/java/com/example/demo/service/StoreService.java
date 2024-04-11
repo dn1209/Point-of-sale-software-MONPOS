@@ -15,12 +15,12 @@ public class StoreService  {
     @Autowired
     private StoreRepository storeRepository;
 
-    public Store saveStore(Store store) {
+    public Store saveStore(String nameStore) {
+        Store store = new Store(nameStore);
         return storeRepository.save(store);
     }
     public boolean checkStoreName(String userName){
-        boolean checkUser = storeRepository.existsByStoreUserName(userName);
-        return checkUser;
+        return storeRepository.existsByStoreUserName(userName);
     }
     public Store findStoreByUserName(String userName){
         Optional<Store> storeOptional = storeRepository.findStoreByUserName(userName);

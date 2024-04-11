@@ -1,14 +1,20 @@
 package com.example.demo.service;
 
+import com.example.demo.SecurityConfig;
 import com.example.demo.exception.UserNotFoundException;
+import com.example.demo.jwt.JwtTokenProvider;
 import com.example.demo.model.CustomUserDetails;
 import com.example.demo.model.Store;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -19,10 +25,12 @@ import java.util.Optional;
 public class UserServices implements UserDetailsService {
     LocalDate today = LocalDate.now();
 
-
     @Autowired
     private UserRepository userRepository;
-
+    @Autowired
+    private SecurityConfig securityConfig;
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
     @Override
     public UserDetails loadUserByUsername(String userName) throws UserNotFoundException {
         Optional<com.example.demo.model.User> userOptional = userRepository.findUserByUserName(userName);
@@ -43,6 +51,26 @@ public class UserServices implements UserDetailsService {
         }
         return userOptional.get();
     }
+    public Long getStoreIdByUserId(HttpServletRequest request){
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            String token = bearerToken.substring(7); // Bỏ phần "Bearer " từ token
+            Long userId = jwtTokenProvider.getUserIdFromJWT(token);
+            Optional<Long> storeId = userRepository.findStoreIdByUserId(userId);
+            if(storeId.isEmpty()){
+                throw new UserNotFoundException("khong tim thay sotreid ");
+            }
+            return storeId.get();
+        }
+        return 1L;
+    }
+    public Long getUserIdByToken(HttpServletRequest request){
+        String bearerToken = request.getHeader("Authorization");
+        String token = bearerToken.substring(7); // Bỏ phần "Bearer " từ token
+        Long userId = jwtTokenProvider.getUserIdFromJWT(token);
+        return userId;
+    }
+    @Transactional
     public void UpdateUserStatus(String email){
         userRepository.updateUserByEmail(email);
     }
@@ -61,15 +89,16 @@ public class UserServices implements UserDetailsService {
     }
 
     public User registerUser(String userName, String password, Store store,String email){
-        User user = new User();
-        user.setUserName(userName);
-        user.setPassword(password);
-        user.setEmail(email);
-        user.setUserStatus("0");
-        user.setCreated(LocalDate.now());
-        user.setLogined(Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        user.setUpdated(Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        user.setStore(store);
+        User user = new User(
+                userName,
+                securityConfig.passwordEncoder().encode(password),
+                email,
+                "0",
+                LocalDate.now(),
+                Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                store,
+                Date.from(today.atStartOfDay(ZoneId.systemDefault()).toInstant())
+                );
         return userRepository.save(user);
     }
 
