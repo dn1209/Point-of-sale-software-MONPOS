@@ -1,5 +1,6 @@
 package com.example.demo.jwt;
 
+import com.example.demo.exception.JwtInvalidException;
 import com.example.demo.service.UserServices;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Autowired
     private UserServices customUserDetailsService;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain filterChain)
@@ -46,8 +48,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } catch (Exception ex) {
-            log.error("failed on set user authentication", ex);
+        } catch (JwtInvalidException ex) {
+        // Ném ra exception để GlobalExceptionHandler xử lý
+
+            response.setStatus(HttpServletResponse.SC_OK);
+            response.setContentType("application/json");
+            response.getWriter().write("{ \"error_code\": 404, \"message\": \"JWT không hop le\" }");
+            return;
+//            throw ex;
         }
 
         filterChain.doFilter(request, response);

@@ -51,6 +51,14 @@ public class UserServices implements UserDetailsService {
         }
         return userOptional.get();
     }
+    public User getUserById(Long id){
+        Optional<User> userOptional = userRepository.findUserById(id);
+        if( userOptional.isEmpty()){
+            throw new UserNotFoundException("Store not found with username: " + id);
+        }
+        User user = userOptional.get();
+        return user;
+    }
     public Long getStoreIdByUserId(HttpServletRequest request){
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {

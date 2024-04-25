@@ -23,9 +23,24 @@ public class StoreService  {
         return storeRepository.existsByStoreUserName(userName);
     }
     public Store findStoreByUserName(String userName){
-        Optional<Store> storeOptional = storeRepository.findStoreByUserName(userName);
+        if(checkStoreName(userName)){
+            System.out.println("save moi");
+            saveStore(userName);
+        }
+        System.out.println("tiep tuc");
+            Optional<Store> storeOptional = storeRepository.findStoreByUserName(userName);
+            if( storeOptional.isEmpty()){
+                throw new UserNotFoundException("Store not found with username: " + userName);
+            }
+            Store store = storeOptional.get();
+            return store;
+
+
+    }
+    public Store findStoreById(Long id){
+        Optional<Store> storeOptional = storeRepository.findStoreById(id);
         if( storeOptional.isEmpty()){
-            throw new UserNotFoundException("Store not found with username: " + userName);
+            throw new UserNotFoundException("Store not found with username: " + id);
         }
         Store store = storeOptional.get();
         return store;

@@ -18,6 +18,7 @@ public class DetailOrder {
             generator = "detailOrder_sequence"
     )
     private long id;
+    private Long productId;
     private int quantity;
     private int price;
     private int discount;

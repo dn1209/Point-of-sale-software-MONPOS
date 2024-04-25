@@ -6,6 +6,8 @@ import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
+
 @Entity
 @Table
 @Data
@@ -33,6 +35,14 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "parent_id")
     private Store store;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Product> products;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Bank> banks;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<GroupProduct> groupProducts;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Manufacture> manufactures;
     private Date logined;
     private String tokenLogin;
 

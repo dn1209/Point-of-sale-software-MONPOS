@@ -25,6 +25,14 @@ public class Store {
     private List<User> users;
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<GroupProduct> groupProducts;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Manufacture> manufactures;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Product> products;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Customer> customers;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Orders> orders;
      public Store(){
     }
 

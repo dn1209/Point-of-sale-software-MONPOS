@@ -1,5 +1,6 @@
 package com.example.demo.jwt;
 
+import com.example.demo.exception.JwtInvalidException;
 import com.example.demo.model.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -34,19 +35,25 @@ public class JwtTokenProvider {
 
         return Long.parseLong(claims.getSubject());
     }
-    public boolean validateToken(String authToken) {
+    public boolean validateToken(String authToken) throws JwtInvalidException {
         try {
             Jwts.parser().setSigningKey(JWT_SECRET).build().parseClaimsJws(authToken);
             return true;
+        }catch (SignatureException ex) {
+            throw new JwtInvalidException("JWT signature does not match");
         } catch (MalformedJwtException ex) {
             log.error("Invalid JWT token");
+            throw new JwtInvalidException("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
             log.error("Expired JWT token");
+            throw new JwtInvalidException("Expired JWT token");
         } catch (UnsupportedJwtException ex) {
             log.error("Unsupported JWT token");
+            throw new JwtInvalidException("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
             log.error("JWT claims string is empty.");
+            throw new JwtInvalidException("JWT claims string is empty.");
         }
-        return false;
     }
+
 }

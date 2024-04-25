@@ -25,6 +25,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT CASE WHEN EXISTS (SELECT 1 FROM User u WHERE u.userName = :userName) THEN true ELSE false END")
     boolean existsByUserName(String userName);
+    //true neu tai khoan da ton tai false neu chua ton tai
 
 
     @Modifying

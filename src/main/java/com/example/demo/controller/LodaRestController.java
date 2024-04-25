@@ -88,17 +88,12 @@ public class LodaRestController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest registerRequest){
         boolean userNameExists = userServices.checkUserName(registerRequest.getUsername());
-        boolean storeNameExists = storeService.checkStoreName(registerRequest.getDisplay_name());
 
         if (userNameExists) {
             ApiResponseError response = new ApiResponseError(HttpStatus.UNAUTHORIZED.value(), "Tài khoản đã tồn tại");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        if(storeNameExists){
-            System.out.println(registerRequest.getDisplay_name());
-            System.out.println("loi");
-            storeService.saveStore(registerRequest.getDisplay_name());
-        }
+
         userServices.registerUser(registerRequest.getUsername(),registerRequest.getPassword(),storeService.findStoreByUserName(registerRequest.getDisplay_name()),registerRequest.getEmail());
         registrationService.registerUser(registerRequest);
         return ResponseEntity.ok(new RegisterReponse("vui lòng kiểm tra email vừa đăng ký để xác thực tài khoản","0"));
@@ -123,10 +118,17 @@ public class LodaRestController {
 
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             String token = bearerToken.substring(7); // Bỏ phần "Bearer " từ token
-            Long userId = jwtTokenProvider.getUserIdFromJWT(token);
-            if (userId != null) {
-                // Xử lý userId ở đây, ví dụ: trả về userId trong ResponseEntity
-                return ResponseEntity.ok("User ID: " + userId);
+            boolean isValidToken = jwtTokenProvider.validateToken(token);
+
+            if (isValidToken) {
+                Long userId = jwtTokenProvider.getUserIdFromJWT(token);
+                if (userId != null) {
+                    // Xử lý userId ở đây, ví dụ: trả về userId trong ResponseEntity
+                    return ResponseEntity.ok("User ID: " + userId);
+                }
+            } else {
+                // Token không hợp lệ, trả về mã lỗi và thông điệp
+                return ResponseEntity.status(200).body("error_code: 404, message: JWT không hợp lệ");
             }
         }
         return ResponseEntity.ok("loi");

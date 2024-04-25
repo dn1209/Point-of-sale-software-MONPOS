@@ -1,21 +1,15 @@
 package com.example.demo.model.payload.Response;
 
+import lombok.Data;
+
+@Data
 public class ApiResponse {
-    private final int status_code;
-    private  Object data;
-    private  Object message;
+    private String error_code;
+    private String message;
 
-    public ApiResponse(int status_code, Object data) {
-        this.data = data;
-        this.status_code = status_code;
 
-    }
-
-    public int getStatusCode() {
-        return status_code;
-    }
-
-    public Object getData() {
-        return data;
+    public ApiResponse(String message, String error_code) {
+        this.error_code = "0";
+        this.message = message;
     }
 }

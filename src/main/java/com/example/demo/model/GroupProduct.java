@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
+import java.util.List;
+
 @Entity
 @Table
 @Data
@@ -24,7 +26,13 @@ public class GroupProduct {
     @ManyToOne
     @JoinColumn(name = "store_id")
     private Store store;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    @OneToMany(mappedBy = "groupProduct")
+    private List<Product> products;
     private int parentId;
     private int level;
+    private int status;
     private LocalDate createdAt;
 }
