@@ -43,7 +43,11 @@ public class OrderService {
         orders.setNotes(orderRequest.getNotes());
         orders.setPaymentMethod(Integer.parseInt(orderRequest.getPayment_method()));
         orders.setCustomerPay(Float.valueOf(orderRequest.getCustomer_pay()));
+        orders.setTotalOriginPrice(Float.valueOf(orderRequest.getCustomer_pay()));
+        orders.setTotalMoney(Float.valueOf(orderRequest.getCustomer_pay()));
+        orders.setTotalPrice(Float.valueOf(orderRequest.getCustomer_pay()));
         orders.setOrderStatus(1);
+        orders.setLack(Float.valueOf(0));
         orderRepository.save(orders);
         for (DetailOrderRequest orderRequest1 : orderRequest.getDetail_order()) {
             productService.updateProductWithPRDSLS(Float.valueOf(orderRequest1.getQuantity()),Long.parseLong(orderRequest1.getId()));
@@ -114,5 +118,8 @@ public class OrderService {
         );
         return apiOrdersResponse;
 
+    }
+    public boolean checkOrders(Long id){
+        return orderRepository.existsById(id);
     }
 }

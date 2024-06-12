@@ -60,6 +60,11 @@ public class OrderController {
 
 
     }
+//    @GetMapping("/products/{id}")
+//    public ResponseEntity<?> getDetailOrder(@PathVariable Long id,HttpServletRequest request){
+//
+//
+//    }
     private LocalDate convertTimestampToDateTime(long timestamp) {
         return LocalDate.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault());
     }

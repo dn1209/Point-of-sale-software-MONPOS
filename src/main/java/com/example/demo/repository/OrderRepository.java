@@ -15,4 +15,8 @@ public interface OrderRepository extends JpaRepository<Orders,Long> {
     List<Orders> findOrdersBetweenDates(Long sId, LocalDate startDate, LocalDate endDate);
     @Query(value = "SELECT COALESCE(MAX(id), 0) FROM Orders", nativeQuery = true)
     Long getLastOrdersId();
+
+
+    @Query("SELECT CASE WHEN EXISTS (SELECT 1 FROM Orders u WHERE u.id = :id) THEN true ELSE false END")
+    boolean existsById(Long id);
 }
